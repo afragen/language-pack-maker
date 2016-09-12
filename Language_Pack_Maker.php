@@ -7,7 +7,7 @@
  * @author    Andy Fragen
  * @license   MIT
  * @link      https://github.com/afragen/github-updater-language-pack-maker
- * @version   1.0
+ * @version   1.0.0
  */
 
 namespace Fragen\GitHub_Updater;
