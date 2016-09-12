@@ -66,7 +66,7 @@ class Language_Pack_Maker {
 	 * Language_Pack_Maker constructor.
 	 */
 	public function __construct() {
-		$this->root_dir           = dirname( dirname( __DIR__ ) );
+		$this->root_dir           = dirname( dirname( dirname( __DIR__ ) ) );
 		$this->language_files_dir = $this->root_dir . '/languages';
 		$this->packages_dir       = $this->root_dir . '/packages';
 		@mkdir( $this->packages_dir, 0777 );
