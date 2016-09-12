@@ -3,7 +3,7 @@
 Uses `class Fragen\GitHub_Updater\Language_Pack_Maker` to installed via composer to create a directory of zip archives of translation mp/po files and a `language-pack.json` file containing data to pass to GitHub Updater.
 
 Install the package via composer.
-Run the composer command: ```composer require afragen/github-updater```
+Run the composer command: ```composer require afragen/github-updater-language-pack-maker```
 
 
 This package requires all .mo/.po files to be in a `/languages` directory located in the repository root. It will create zipfiles in a `/packages` directory in the repository root. It will create a `language-pack.json` file in the repository root.
