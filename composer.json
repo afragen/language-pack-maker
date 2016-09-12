@@ -9,7 +9,7 @@
         "email"    : "andy@thefragens.com",
         "homepage" : "http://thefragens.com",
         "role"     : "Developer"
-      },
+      }
     ],
     "require": {
       "php": ">=5.3"
