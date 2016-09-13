@@ -202,11 +202,12 @@ class Language_Pack_Maker {
 		foreach ( $packages as $package ) {
 			foreach ( $this->translations as $translation ) {
 				if ( false !== stristr( $package, $translation ) ) {
-					$arr[ $translation ]['slug']       = stristr( $translation, strrchr( $translation, '-' ), true );
-					$arr[ $translation ]['language']   = ltrim( strrchr( $translation, '-' ), '-' );
-					$arr[ $translation ]['updated']    = date( 'Y-m-d H:i:s', filemtime( $this->packages[ $translation ][0] ) );
-					$arr[ $translation ]['package']    = '/packages/' . $package;
-					$arr[ $translation ]['autoupdate'] = '1';
+					$locale = ltrim( strrchr( $translation, '-' ), '-' );
+					$arr[ $locale ]['slug']       = stristr( $translation, strrchr( $translation, '-' ), true );
+					$arr[ $locale ]['language']   = $locale;
+					$arr[ $locale ]['updated']    = date( 'Y-m-d H:i:s', filemtime( $this->packages[ $translation ][0] ) );
+					$arr[ $locale ]['package']    = '/packages/' . $package;
+					$arr[ $locale ]['autoupdate'] = '1';
 				}
 			}
 		}
