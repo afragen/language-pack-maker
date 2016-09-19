@@ -1,3 +1,6 @@
+## 1.2.0 / 2016-09-19
+* use single `glob()` in `list_directory()`
+
 ## 1.1.0 / 2016-09-18
 * use `glob()` in `list_directory()`
 

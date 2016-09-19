@@ -14,7 +14,7 @@ The format of the generated JSON file is as follows.
 ```json
 [
   {
-    "translations": [
+    "{language}": [
       {
         "type": "{plugin|theme} from GitHub Updater",
         "slug": "{$slug}",
