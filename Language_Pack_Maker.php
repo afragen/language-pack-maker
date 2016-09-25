@@ -7,7 +7,7 @@
  * @author    Andy Fragen
  * @license   MIT
  * @link      https://github.com/afragen/github-updater-language-pack-maker
- * @version   1.2.0
+ * @version   1.3.0
  */
 
 namespace Fragen\GitHub_Updater;
@@ -91,7 +91,7 @@ class Language_Pack_Maker {
 	 *
 	 * @return array $dir_list Listing of directory contents.
 	 */
-	public function list_directory( $dir ) {
+	private function list_directory( $dir ) {
 		$dir_list = array();
 
 		// Only add .mo/.po/.zip files
