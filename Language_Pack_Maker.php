@@ -209,5 +209,16 @@ class Language_Pack_Maker {
 		printf( "\n<br>" . 'language-pack.json created.' . "\n<br>" );
 	}
 
+	/**
+	 * Cleanup header comment.
+	 *
+	 * @param $str
+	 *
+	 * @return string
+	 */
+	private function _cleanup_header_comment( $str ) {
+		return trim( preg_replace( "/\s*(?:\*\/|\?>).*/", '', $str ) );
+	}
+
 }
 
