@@ -198,7 +198,7 @@ class Language_Pack_Maker {
 					$locale = ltrim( strrchr( $translation, '-' ), '-' );
 					$arr[ $locale ]['slug']       = stristr( $translation, strrchr( $translation, '-' ), true );
 					$arr[ $locale ]['language']   = $locale;
-					$arr[ $locale ]['updated']    = date( 'Y-m-d H:i:s', filemtime( $this->packages[ $translation ][0] ) );
+					$arr[ $locale ]['updated']    = $this->get_po_revision( $translation . '.po' );
 					$arr[ $locale ]['package']    = '/packages/' . $package;
 					$arr[ $locale ]['autoupdate'] = '1';
 				}
@@ -207,6 +207,38 @@ class Language_Pack_Maker {
 
 		file_put_contents( $this->root_dir . '/language-pack.json', json_encode( $arr ) );
 		printf( "\n<br>" . 'language-pack.json created.' . "\n<br>" );
+	}
+
+	/**
+	 * Returns PO-Revision-Date from .po file.
+	 *
+	 * @param $file
+	 *
+	 * @return mixed
+	 */
+	private function get_po_revision( $file ) {
+		$file        = $this->language_files_dir . '/' . $file;
+		$headers     = array( 'PO-Revision-Date' => '"PO-Revision-Date' );
+		$all_headers = array();
+
+		$fp = fopen( $file, 'r' );
+
+		// Pull only the first 1kiB of the file in.
+		$contents = fread( $fp, 1024 );
+
+		fclose( $fp );
+
+		foreach ( $headers as $field => $regex ) {
+			if ( preg_match( '/^[ \t\/*#@]*' . preg_quote( $regex, '/' ) . ':(.*)$/mi', $contents, $match ) && $match[1] ) {
+				$value                 = $this->_cleanup_header_comment( $match[1] );
+				$value                 = preg_replace( '~(\\\n)?"$~', '', $value );
+				$all_headers[ $field ] = $value;
+			} else {
+				$all_headers[ $field ] = '';
+			}
+		}
+
+		return $all_headers['PO-Revision-Date'];
 	}
 
 	/**
