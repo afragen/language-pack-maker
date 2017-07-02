@@ -1,22 +1,20 @@
 <?php
 
 /**
- * GitHub Updater Language Pack Maker
+ * Language Pack Maker
  *
- * @package   Language_Pack_Maker
  * @author    Andy Fragen
  * @license   MIT
  * @link      https://github.com/afragen/github-updater-language-pack-maker
- * @version   1.3.0
+ * @version   1.4.0
  */
 
-namespace Fragen\GitHub_Updater;
+namespace Fragen\Language_Pack_Maker;
 
 
 /**
  * Class Language_Pack_Maker
  *
- * @package Fragen\GitHub_Updater
  */
 class Language_Pack_Maker {
 

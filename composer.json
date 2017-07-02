@@ -10,15 +10,11 @@
       "role": "Developer"
     }
   ],
+  "prefer-stable": true,
   "require": {
     "php": ">=5.3"
   },
   "support": {
     "issues": "https://github.com/afragen/github-updater-language-pack-maker/issues"
-  },
-  "autoload": {
-    "psr-4": {
-      "Fragen\\GitHub_Updater\\": "/"
-    }
   }
 }
