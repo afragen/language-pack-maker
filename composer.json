@@ -23,5 +23,10 @@
   "prefer-stable": true,
   "require": {
     "php": ">=5.4"
+  },
+  "autoload": {
+    "files": [
+      "index.php"
+    ]
   }
 }
