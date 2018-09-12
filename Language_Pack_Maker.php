@@ -73,7 +73,7 @@ class Language_Pack_Maker {
 	/**
 	 * Start making stuff.
 	 */
-	private function run() {
+	public function run() {
 		$this->directory_list = $this->list_directory( $this->language_files_dir );
 		$this->translations   = $this->process_directory( $this->directory_list );
 		$this->packages       = $this->create_packages();
