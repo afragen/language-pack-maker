@@ -68,7 +68,6 @@ class Language_Pack_Maker {
 		$this->language_files_dir = $this->root_dir . '/languages';
 		$this->packages_dir       = $this->root_dir . '/packages';
 		@mkdir( $this->packages_dir, 0777 );
-		$this->run();
 	}
 
 	/**
