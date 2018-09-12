@@ -6,7 +6,7 @@
  * @author    Andy Fragen
  * @license   MIT
  * @link      https://github.com/afragen/language-pack-maker
- * @version   1.5.0
+ * @version   1.6.0
  */
 
 namespace Fragen\Language_Pack_Maker;
@@ -107,9 +107,11 @@ class Language_Pack_Maker {
 	 * @return array $translation_list An array of translations.
 	 */
 	private function process_directory( $dir_list ) {
-		$translation_list = array_map( function( $e ) {
-			return pathinfo( $e, PATHINFO_FILENAME );
-		}, $dir_list );
+		$translation_list = array_map(
+			function( $e ) {
+					return pathinfo( $e, PATHINFO_FILENAME );
+			}, $dir_list
+		);
 		$translation_list = array_unique( $translation_list );
 
 		return $translation_list;
@@ -192,7 +194,7 @@ class Language_Pack_Maker {
 		foreach ( $packages as $package ) {
 			foreach ( $this->translations as $translation ) {
 				if ( false !== stripos( $package, $translation ) ) {
-					$locale = ltrim( strrchr( $translation, '-' ), '-' );
+					$locale                       = ltrim( strrchr( $translation, '-' ), '-' );
 					$arr[ $locale ]['slug']       = stristr( $translation, strrchr( $translation, '-' ), true );
 					$arr[ $locale ]['language']   = $locale;
 					$arr[ $locale ]['updated']    = $this->get_po_revision( $translation . '.po' );
@@ -246,8 +248,7 @@ class Language_Pack_Maker {
 	 * @return string
 	 */
 	private function _cleanup_header_comment( $str ) {
-		return trim( preg_replace( "/\s*(?:\*\/|\?>).*/", '', $str ) );
+		return trim( preg_replace( '/\s*(?:\*\/|\?>).*/', '', $str ) );
 	}
 
 }
-
