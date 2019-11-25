@@ -100,6 +100,27 @@ class Language_Pack_Maker {
 	}
 
 	/**
+	 * Returns a string of the translation name.
+	 *
+	 * @param string $filename filename
+	 *
+	 * @return string $dir_list Listing of directory contents.
+	 */
+	private function process_name( $filename ) {
+		if ( 'json' === pathinfo( $filename, PATHINFO_EXTENSION  ) ) {
+
+			// Parse filename.
+			$list = explode( '-' , pathinfo( $filename, PATHINFO_FILENAME ) );
+
+			// Remove the md5 part.
+			array_pop( $list );
+
+			return implode( $list, '-' );
+		}
+		return pathinfo( $filename, PATHINFO_FILENAME );
+	}
+
+	/**
 	 * Returns an array of translations with stripped file extension.
 	 *
 	 * @param array $dir_list Listing of directory contents.
@@ -108,9 +129,7 @@ class Language_Pack_Maker {
 	 */
 	private function process_directory( $dir_list ) {
 		$translation_list = array_map(
-			function( $e ) {
-					return pathinfo( $e, PATHINFO_FILENAME );
-			},
+			array( $this, 'process_name' ),
 			$dir_list
 		);
 		$translation_list = array_unique( $translation_list );
