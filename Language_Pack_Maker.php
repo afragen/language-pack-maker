@@ -14,7 +14,6 @@
 namespace Fragen\Language_Pack_Maker;
 
 use Gettext\Translations;
-use Gettext\Extractors\Po as PoExtractor;
 
 /**
  * Class Language_Pack_Maker
@@ -35,7 +34,7 @@ class Language_Pack_Maker {
 	private $translations;
 
 	/**
-	 * Array of .mo/.po files for each translation.
+	 * Array of .mo/.po/.json files for each translation.
 	 *
 	 * @var array
 	 */
@@ -181,9 +180,9 @@ class Language_Pack_Maker {
 
 		// check to make sure the file exists.
 		if ( file_exists( $destination ) ) {
-			printf( basename( $destination ) . ' created.' . "\n<br>" );
+			printf( "\n" . basename( $destination ) . ' created. <br>' );
 		} else {
-			printf( '<span style="color:#f00">' . basename( $destination ) . ' failed.</span>' . "\n<br>" );
+			printf( "\n<span style='color:#f00'>" . basename( $destination ) . ' failed.</span><br>' );
 		}
 	}
 
@@ -200,7 +199,7 @@ class Language_Pack_Maker {
 					$locale                       = ltrim( strrchr( $translation, '-' ), '-' );
 					$arr[ $locale ]['slug']       = stristr( $translation, strrchr( $translation, '-' ), true );
 					$arr[ $locale ]['language']   = $locale;
-					$arr[ $locale ]['updated']    = $this->get_po_revision( $translation . '.po' );
+					$arr[ $locale ]['updated']    = $this->get_po_revision( "$translation.po" );
 					$arr[ $locale ]['package']    = '/packages/' . $package;
 					$arr[ $locale ]['autoupdate'] = '1';
 				}
@@ -208,7 +207,7 @@ class Language_Pack_Maker {
 		}
 
 		file_put_contents( $this->root_dir . '/language-pack.json', json_encode( $arr ) );
-		printf( "\n<br>" . 'language-pack.json created.' . "\n<br>" );
+		printf( "\n<br>" . 'language-pack.json created.' . "\n" );
 	}
 
 	/**
@@ -220,8 +219,7 @@ class Language_Pack_Maker {
 	 */
 	private function get_po_revision( $file ) {
 		$file         = $this->language_files_dir . '/' . $file;
-		$translations = new Translations();
-		PoExtractor::fromFile( $file, $translations );
+		$translations = Translations::fromPoFile( $file );
 
 		return $translations->getHeader( 'PO-Revision-Date' );
 	}
