@@ -53,9 +53,9 @@ To utilize the Language Pack Creator, you will need to open and run `http://loca
 
 ### If you have translations in javascript files you should also do the following.
 
-Run the command: ```composer require wp-cli/i18n-command```
-
 Everytime you need to update javascript translations files you should run `wp i18n make-json languages/ --no-purge` from the root directory.
+
+If WP-CLI is not installed, run the command: ```composer require wp-cli/i18n-command```
 
 You could add this to your `composer.json` file as follows.
 
