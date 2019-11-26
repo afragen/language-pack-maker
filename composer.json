@@ -1,6 +1,6 @@
 {
   "name": "afragen/language-pack-maker",
-  "description": "Library that helps create git sourced WordPress Language Packs from mo/po files.",
+  "description": "Library that helps create git sourced WordPress Language Packs from po files.",
   "version": "2.0.0",
   "type": "library",
   "license": "MIT",

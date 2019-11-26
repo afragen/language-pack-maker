@@ -77,7 +77,8 @@ class Language_Pack_Maker {
 	public function run() {
 		$this->directory_list = $this->list_directory( $this->language_files_dir );
 		$this->translations   = $this->process_directory( $this->directory_list );
-		$this->packages       = $this->create_packages();
+		$this->create_mo_files( $this->language_files_dir );
+		$this->packages = $this->create_packages();
 		$this->create_language_packs();
 		$this->create_json();
 	}
@@ -108,10 +109,10 @@ class Language_Pack_Maker {
 	 * @return string $dir_list Listing of directory contents.
 	 */
 	private function process_name( $filename ) {
-		if ( 'json' === pathinfo( $filename, PATHINFO_EXTENSION  ) ) {
+		if ( 'json' === pathinfo( $filename, PATHINFO_EXTENSION ) ) {
 
 			// Parse filename.
-			$list = explode( '-' , pathinfo( $filename, PATHINFO_FILENAME ) );
+			$list = explode( '-', pathinfo( $filename, PATHINFO_FILENAME ) );
 
 			// Remove the md5 part.
 			array_pop( $list );
@@ -136,6 +137,28 @@ class Language_Pack_Maker {
 		$translation_list = array_unique( $translation_list );
 
 		return $translation_list;
+	}
+
+	/**
+	 * Create .mo files from .po files.
+	 *
+	 * @param string $dir File path to language files directory.
+	 *
+	 * @return void
+	 */
+	private function create_mo_files( $dir ) {
+		foreach ( glob( "$dir/*.po" ) as $file ) {
+			$base             = str_replace( '.po', '', basename( $file ) );
+			$po_list[ $base ] = $file;
+		}
+
+		foreach ( $this->translations as $locale ) {
+			$translations = Translations::fromPoFile( $po_list[ $locale ] );
+			$translations->toMoFile( "$dir/$locale.mo" );
+		}
+
+		// Re-create directory list of files to include new .mo files.
+		$this->directory_list = $this->list_directory( $dir );
 	}
 
 	/**
