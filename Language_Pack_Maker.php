@@ -115,7 +115,7 @@ class Language_Pack_Maker {
 			// Remove the md5 part.
 			array_pop( $list );
 
-			return implode( $list, '-' );
+			return implode( '-', $list );
 		}
 		return pathinfo( $filename, PATHINFO_FILENAME );
 	}
