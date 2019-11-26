@@ -13,11 +13,12 @@
 
 namespace Fragen\Language_Pack_Maker;
 
+use Gettext\Translations;
+
 /**
  * Class Language_Pack_Maker
  */
 class Language_Pack_Maker {
-
 	/**
 	 * List of files in specified directory.
 	 *
@@ -33,7 +34,7 @@ class Language_Pack_Maker {
 	private $translations;
 
 	/**
-	 * Array of .mo/.po files for each translation.
+	 * Array of .mo/.po/.json files for each translation.
 	 *
 	 * @var array
 	 */
@@ -89,7 +90,7 @@ class Language_Pack_Maker {
 	 * @return array $dir_list Listing of directory contents.
 	 */
 	private function list_directory( $dir ) {
-		$dir_list = array();
+		$dir_list = [];
 
 		// Only add mo/po/zip/json files.
 		foreach ( glob( $dir . '/*.{mo,po,zip,json}', GLOB_BRACE ) as $file ) {
@@ -143,9 +144,9 @@ class Language_Pack_Maker {
 	 * @return array $packages Associative array of translation files per translation.
 	 */
 	private function create_packages() {
-		$packages = array();
+		$packages = [];
 		foreach ( $this->translations as $translation ) {
-			$package = array();
+			$package = [];
 			foreach ( $this->directory_list as $file ) {
 				if ( false !== stripos( $file, $translation ) ) {
 					$package[] = $this->language_files_dir . '/' . $file;
@@ -177,7 +178,7 @@ class Language_Pack_Maker {
 	 *
 	 * @return bool
 	 */
-	private function create_zip( $files = array(), $destination = '', $overwrite = true ) {
+	private function create_zip( $files = [], $destination = '', $overwrite = true ) {
 		// if the zip file already exists and overwrite is false, return false.
 		if ( file_exists( $destination ) && ! $overwrite ) {
 			return false;
@@ -185,7 +186,7 @@ class Language_Pack_Maker {
 
 		// create the archive.
 		$zip = new \ZipArchive();
-		if ( $zip->open( $destination, \ZIPARCHIVE::OVERWRITE | \ZIPARCHIVE::CREATE ) !== true ) {
+		if ( true !== $zip->open( $destination, \ZIPARCHIVE::OVERWRITE | \ZIPARCHIVE::CREATE ) ) {
 			return false;
 		}
 		// add the files.
@@ -198,9 +199,9 @@ class Language_Pack_Maker {
 
 		// check to make sure the file exists.
 		if ( file_exists( $destination ) ) {
-			printf( basename( $destination ) . ' created.' . "\n<br>" );
+			printf( "\n" . basename( $destination ) . ' created. <br>' );
 		} else {
-			printf( '<span style="color:#f00">' . basename( $destination ) . ' failed.</span>' . "\n<br>" );
+			printf( "\n<span style='color:#f00'>" . basename( $destination ) . ' failed.</span><br>' );
 		}
 	}
 
@@ -209,7 +210,7 @@ class Language_Pack_Maker {
 	 */
 	private function create_json() {
 		$packages = $this->list_directory( $this->packages_dir );
-		$arr      = array();
+		$arr      = [];
 
 		foreach ( $packages as $package ) {
 			foreach ( $this->translations as $translation ) {
@@ -217,7 +218,7 @@ class Language_Pack_Maker {
 					$locale                       = ltrim( strrchr( $translation, '-' ), '-' );
 					$arr[ $locale ]['slug']       = stristr( $translation, strrchr( $translation, '-' ), true );
 					$arr[ $locale ]['language']   = $locale;
-					$arr[ $locale ]['updated']    = $this->get_po_revision( $translation . '.po' );
+					$arr[ $locale ]['updated']    = $this->get_po_revision( "$translation.po" );
 					$arr[ $locale ]['package']    = '/packages/' . $package;
 					$arr[ $locale ]['autoupdate'] = '1';
 				}
@@ -225,7 +226,7 @@ class Language_Pack_Maker {
 		}
 
 		file_put_contents( $this->root_dir . '/language-pack.json', json_encode( $arr ) );
-		printf( "\n<br>" . 'language-pack.json created.' . "\n<br>" );
+		printf( "\n<br>" . 'language-pack.json created.' . "\n" );
 	}
 
 	/**
@@ -233,42 +234,12 @@ class Language_Pack_Maker {
 	 *
 	 * @param $file File name.
 	 *
-	 * @return mixed
-	 */
-	private function get_po_revision( $file ) {
-		$file        = $this->language_files_dir . '/' . $file;
-		$headers     = array( 'PO-Revision-Date' => '"PO-Revision-Date' );
-		$all_headers = array();
-
-		$fp = fopen( $file, 'r' );
-
-		// Pull only the first 1kiB of the file in.
-		$contents = fread( $fp, 1024 );
-
-		fclose( $fp );
-
-		foreach ( $headers as $field => $regex ) {
-			if ( preg_match( '/^[ \t\/*#@]*' . preg_quote( $regex, '/' ) . ':(.*)$/mi', $contents, $match ) && $match[1] ) {
-				$value                 = $this->_cleanup_header_comment( $match[1] );
-				$value                 = preg_replace( '~(\\\n)?"$~', '', $value );
-				$all_headers[ $field ] = $value;
-			} else {
-				$all_headers[ $field ] = '';
-			}
-		}
-
-		return $all_headers['PO-Revision-Date'];
-	}
-
-	/**
-	 * Cleanup header comment.
-	 *
-	 * @param $str File header.
-	 *
 	 * @return string
 	 */
-	private function _cleanup_header_comment( $str ) {
-		return trim( preg_replace( '/\s*(?:\*\/|\?>).*/', '', $str ) );
-	}
+	private function get_po_revision( $file ) {
+		$file         = $this->language_files_dir . '/' . $file;
+		$translations = Translations::fromPoFile( $file );
 
+		return $translations->getHeader( 'PO-Revision-Date' );
+	}
 }
