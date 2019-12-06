@@ -15,7 +15,6 @@ This library requires all .po files to be in a `/languages` directory located in
 * It will create .mo files from the .po files.
 * It will create zipfiles in a `/packages` directory in the repository root.
 * It will create a `language-pack.json` file in the repository root.
-* It will then cleanup the temporary directory.
 
 The format of the generated JSON file is as follows.
 
@@ -66,7 +65,8 @@ With the following added to your `composer.json` file, it will run the sequence 
   "scripts": {
     "post-update-cmd": [
       "mkdir -p ./tmp; cp -r ./languages/*.po ./tmp",
-      "wp i18n make-json tmp/"
+      "wp i18n make-json tmp/",
+      "php ./vendor/autoload.php"
     ]
   }
 ```

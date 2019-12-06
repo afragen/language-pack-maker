@@ -92,7 +92,6 @@ class Language_Pack_Maker {
 		$this->packages = $this->create_packages();
 		$this->create_language_packs();
 		$this->create_json();
-		$this->clean_up_temp_dir( $this->temp_language_files_dir );
 	}
 
 	/**
@@ -288,18 +287,5 @@ class Language_Pack_Maker {
 		$translations = Translations::fromPoFile( $file );
 
 		return $translations->getHeader( 'PO-Revision-Date' );
-	}
-
-	/**
-	 * Delete files from temporary directory.
-	 *
-	 * @param string $dir File path to temporary directory.
-	 *
-	 * @return void
-	 */
-	private function clean_up_temp_dir( $dir ) {
-		foreach ( $this->directory_list as $file ) {
-			@unlink( "$this->temp_language_files_dir/$file" );
-		}
 	}
 }
