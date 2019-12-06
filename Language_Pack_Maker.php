@@ -301,6 +301,5 @@ class Language_Pack_Maker {
 		foreach ( $this->directory_list as $file ) {
 			@unlink( "$this->temp_language_files_dir/$file" );
 		}
-		@rmdir( $this->temp_language_files_dir );
 	}
 }

@@ -15,7 +15,7 @@ This library requires all .po files to be in a `/languages` directory located in
 * It will create .mo files from the .po files.
 * It will create zipfiles in a `/packages` directory in the repository root.
 * It will create a `language-pack.json` file in the repository root.
-* It will then cleanup and remove the temporary directory.
+* It will then cleanup the temporary directory.
 
 The format of the generated JSON file is as follows.
 
