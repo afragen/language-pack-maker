@@ -25,7 +25,8 @@
   "require": {
     "php": ">=7.0",
     "gettext/gettext": "^4.8",
-    "wp-cli/i18n-command": "^2"
+    "wp-cli/i18n-command": "^2",
+    "afragen/wp-cli-runner": "^0.1"
   },
   "autoload": {
     "psr-4": {
