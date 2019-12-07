@@ -1,7 +1,7 @@
 {
   "name": "afragen/language-pack-maker",
   "description": "Library that helps create git sourced WordPress Language Packs from po files.",
-  "version": "2.1.2",
+  "version": "0.1",
   "type": "library",
   "license": "MIT",
   "keywords": [
@@ -28,9 +28,9 @@
     "wp-cli/i18n-command": "^2"
   },
   "autoload": {
-    "classmap": [
-      "Language_Pack_Maker.php"
-    ],
+    "psr-4": {
+      "Fragen\\Language_Pack_Maker\\": "src/"
+    },
     "files": [
       "index.php"
     ]
