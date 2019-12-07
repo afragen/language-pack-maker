@@ -1,6 +1,6 @@
-## 2.x
+## [unreleased]
 * process .json files in the framework
-* added WP-CLI _loader_, [polevaultweb/phpunit-wp-cli-runner](https://github.com/polevaultweb/phpunit-wp-cli-runner)
+* added WP-CLI _loader_ as composer module, [fork of polevaultweb/phpunit-wp-cli-runner](https://github.com/polevaultweb/phpunit-wp-cli-runner)
 * cleanup temp directory afterwards
 
 ## 2.0.0 / 2019-11-26
