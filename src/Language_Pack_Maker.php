@@ -15,6 +15,7 @@ namespace Fragen\Language_Pack_Maker;
 
 use Gettext\Translations;
 use WP_CLI\I18n\MakeJsonCommand;
+use Fragen\WP_CLI_Runner\Runner;
 
 /**
  * Class Language_Pack_Maker
@@ -186,7 +187,7 @@ class Language_Pack_Maker {
 	}
 
 	private function create_js_files( $dir ) {
-		Loader::init( $this->root_dir . '/vendor' );
+		Runner::init( $this->root_dir . '/vendor' );
 		$class      = new MakeJsonCommand();
 		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakeJsonCommand' );
 		$make_json  = $reflection->getMethod( 'make_json' );
