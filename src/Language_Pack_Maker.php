@@ -14,17 +14,13 @@
 namespace Fragen\Language_Pack_Maker;
 
 use Gettext\Translations;
-use WP_CLI;
-use WP_CLI_Command;
-use WP_CLI\Utils;
-use WP_CLI\I18n;
 use WP_CLI\I18n\MakeJsonCommand;
-//use function WP_CLI\I18n\MakeJsonCommand\make_json as make_json;
 
 /**
  * Class Language_Pack_Maker
  */
 class Language_Pack_Maker {
+
 	/**
 	 * List of files in specified directory.
 	 *
@@ -95,10 +91,11 @@ class Language_Pack_Maker {
 		$this->copy_to_temp_dir( $this->temp_language_files_dir );
 		$this->translations = $this->process_directory( $this->directory_list );
 		$this->create_mo_files( $this->temp_language_files_dir );
-		$this->create_js_files( $this->temp_language_files_dir);
+		$this->create_js_files( $this->temp_language_files_dir );
 		$this->packages = $this->create_packages();
 		$this->create_language_packs();
 		$this->create_json();
+		$this->clean_up_dir( $this->temp_language_files_dir, $this->directory_list );
 	}
 
 	/**
@@ -186,30 +183,24 @@ class Language_Pack_Maker {
 			$translations = Translations::fromPoFile( $po_list[ $locale ] );
 			$translations->toMoFile( "$dir/$locale.mo" );
 		}
-
-		// Re-create directory list of files to include new .mo files.
-		$this->directory_list = $this->list_directory( $dir );
 	}
 
-	private function create_js_files( $dir){
-		new Loader::init($this->root_dir . '/vendor');
-		$class = new MakeJsonCommand();
-		$reflection = new \ReflectionClass('\WP_CLI\I18n\MakeJsonCommand');
-		$make_json = $reflection->getMethod('make_json');
-		$make_json->setAccessible(true);
+	private function create_js_files( $dir ) {
+		Loader::init( $this->root_dir . '/vendor' );
+		$class      = new MakeJsonCommand();
+		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakeJsonCommand' );
+		$make_json  = $reflection->getMethod( 'make_json' );
+		$make_json->setAccessible( true );
 
 		foreach ( glob( "$dir/*.po" ) as $file ) {
 			$base             = str_replace( '.po', '', basename( $file ) );
 			$po_list[ $base ] = $file;
 		}
 
-		foreach( $this->translations as $locale ){
-			$params = array("$this->temp_language_files_dir/$locale.po", $this->temp_language_files_dir);
-			$make_json->invokeArgs($class, $params);
+		foreach ( $this->translations as $locale ) {
+			$params = array( "$this->temp_language_files_dir/$locale.po", $this->temp_language_files_dir );
+			$make_json->invokeArgs( $class, $params );
 		}
-
-		// Re-create directory list of files to include new .json files.
-		$this->directory_list = $this->list_directory( $dir );
 	}
 
 	/**
@@ -218,7 +209,8 @@ class Language_Pack_Maker {
 	 * @return array $packages Associative array of translation files per translation.
 	 */
 	private function create_packages() {
-		$packages = array();
+		$packages             = array();
+		$this->directory_list = $this->list_directory( $this->temp_language_files_dir );
 		foreach ( $this->translations as $translation ) {
 			$package = array();
 			foreach ( $this->directory_list as $file ) {
@@ -315,5 +307,20 @@ class Language_Pack_Maker {
 		$translations = Translations::fromPoFile( $file );
 
 		return $translations->getHeader( 'PO-Revision-Date' );
+	}
+
+	/**
+	 * Cleanup directory.
+	 *
+	 * @param string $dir      Path to directory.
+	 * @param array  $filelist Array of files.
+	 *
+	 * @return void
+	 */
+	private function clean_up_dir( $dir, $filelist ) {
+		foreach ( $filelist as $file ) {
+			@unlink( "$dir/$file" );
+		}
+		@rmdir( $dir );
 	}
 }

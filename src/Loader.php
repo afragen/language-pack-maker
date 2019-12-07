@@ -9,6 +9,10 @@ class Loader {
 	 * @param string $vendorDir
 	 */
 	public static function init( $vendorDir ) {
+		if ( ! defined( 'WP_CLI_VERSION' ) ) {
+			define( 'WP_CLI_VERSION', '2.x' );
+		}
+
 		if ( ! defined( 'WP_CLI_ROOT' ) ) {
 			define( 'WP_CLI_ROOT', $vendorDir . '/wp-cli/wp-cli' );
 		}
