@@ -89,7 +89,7 @@ class Language_Pack_Maker {
 	 */
 	public function run() {
 		$this->directory_list = $this->list_directory( $this->language_files_dir );
-		$this->copy_to_temp_dir( $this->temp_language_files_dir );
+		$this->copy_to_dir( $this->temp_language_files_dir );
 		$this->translations = $this->process_directory( $this->directory_list );
 		$this->create_mo_files( $this->temp_language_files_dir );
 		$this->create_js_files( $this->temp_language_files_dir );
@@ -118,15 +118,17 @@ class Language_Pack_Maker {
 	}
 
 	/**
-	 * Copy files from language files directory to temp directory for processing.
+	 * Copy files from one directory to another directory.
+	 *
+	 * @param string $dir File path to directory.
 	 *
 	 * @return void
 	 */
-	private function copy_to_temp_dir() {
+	private function copy_to_dir( $dir ) {
 		foreach ( $this->directory_list as $file ) {
-			copy( "$this->language_files_dir/$file", "$this->temp_language_files_dir/$file" );
+			copy( "$this->language_files_dir/$file", "$dir/$file" );
 		}
-		$this->directory_list = $this->list_directory( $this->temp_language_files_dir );
+		$this->directory_list = $this->list_directory( $dir );
 	}
 
 	/**
@@ -186,6 +188,13 @@ class Language_Pack_Maker {
 		}
 	}
 
+	/**
+	 * Create .json JS translation files from .po file.
+	 *
+	 * @param string $dir File path to temporary language files directory.
+	 *
+	 * @return void
+	 */
 	private function create_js_files( $dir ) {
 		Runner::init( $this->root_dir . '/vendor' );
 		$class      = new MakeJsonCommand();
