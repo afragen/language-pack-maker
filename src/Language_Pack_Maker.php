@@ -255,7 +255,7 @@ class Language_Pack_Maker {
 	 *
 	 * @link https://davidwalsh.name/create-zip-php
 	 *
-	 * @param array  $files       Array of .mo/.po files for each translation.
+	 * @param array  $files       Array of files for each language pack.
 	 * @param string $destination Filepath to zipfile.
 	 * @param bool   $overwrite   Boolean to set zipfile creation overwrite mode.
 	 *
