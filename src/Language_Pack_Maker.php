@@ -282,9 +282,9 @@ class Language_Pack_Maker {
 
 		// check to make sure the file exists.
 		if ( file_exists( $destination ) ) {
-			printf( "\n" . basename( $destination ) . ' created. <br>' );
+			printf( "\n" . basename( $destination ) . ' created.' );
 		} else {
-			printf( "\n<span style='color:#f00'>" . basename( $destination ) . ' failed.</span><br>' );
+			printf( "\n** " . basename( $destination ) . ' failed. **' );
 		}
 	}
 
@@ -309,7 +309,7 @@ class Language_Pack_Maker {
 		}
 
 		file_put_contents( $this->root_dir . '/language-pack.json', json_encode( $arr ) );
-		printf( "\n<br>" . 'language-pack.json created.' . "\n" );
+		printf( "\n\n" . 'language-pack.json created.' . "\n" );
 	}
 
 	/**
