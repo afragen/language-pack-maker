@@ -284,7 +284,7 @@ class Language_Pack_Maker {
 		if ( file_exists( $destination ) ) {
 			printf( "\n" . basename( $destination ) . ' created.' );
 		} else {
-			printf( "\n** " . basename( $destination ) . ' failed. **' );
+			printf( "\n>> " . basename( $destination ) . ' failed. <<' );
 		}
 	}
 
