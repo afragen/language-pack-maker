@@ -196,9 +196,15 @@ class Language_Pack_Maker {
 	 * @return void
 	 */
 	private function create_js_files( $dir ) {
+		$assoc_args = array(
+			'purge'        => true,
+			'pretty-print' => false,
+		);
+
 		Runner::init( $this->root_dir . '/vendor' );
 		$class      = new MakeJsonCommand();
 		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakeJsonCommand' );
+		$purge      = $reflection->getMethod( '__invoke' );
 		$make_json  = $reflection->getMethod( 'make_json' );
 		$make_json->setAccessible( true );
 
@@ -208,7 +214,8 @@ class Language_Pack_Maker {
 		}
 
 		foreach ( $this->translations as $locale ) {
-			$params = array( "$this->temp_language_files_dir/$locale.po", $this->temp_language_files_dir );
+			$params = array( "$dir/$locale.po", $dir );
+			$purge->invokeArgs( $class, array( $params, $assoc_args ) );
 			$make_json->invokeArgs( $class, $params );
 		}
 	}
