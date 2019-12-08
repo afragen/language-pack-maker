@@ -12,7 +12,7 @@
 
 require_once __DIR__ . '/src/Language_Pack_Maker.php';
 
-echo "<pre>\n\n";
+echo "<pre>\n";
 echo ">>Generating Language Pack Zip Files and JSON file<<\n\n";
 ( new Fragen\Language_Pack_Maker\Language_Pack_Maker() )->run();
-echo "\n</pre>\n";
+echo "</pre>\n";
