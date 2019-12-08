@@ -91,8 +91,8 @@ class Language_Pack_Maker {
 		$this->directory_list = $this->list_directory( $this->language_files_dir );
 		$this->copy_to_dir( $this->temp_language_files_dir );
 		$this->translations = $this->process_directory( $this->directory_list );
-		$this->create_mo_files( $this->temp_language_files_dir );
 		$this->create_js_files( $this->temp_language_files_dir );
+		$this->create_mo_files( $this->temp_language_files_dir );
 		$this->packages = $this->create_packages();
 		$this->create_language_packs();
 		$this->create_json();
