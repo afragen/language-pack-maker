@@ -93,7 +93,7 @@ class Language_Pack_Maker {
 		$this->translations = $this->process_directory( $this->directory_list );
 		$this->create_js_files( $this->temp_language_files_dir );
 		$this->create_mo_files( $this->temp_language_files_dir );
-		$this->packages = $this->create_packages();
+		$this->packages = $this->create_packages( $this->temp_language_files_dir );
 		$this->create_language_packs();
 		$this->create_json();
 		$this->clean_up_dir( $this->temp_language_files_dir, $this->directory_list );
@@ -223,16 +223,18 @@ class Language_Pack_Maker {
 	/**
 	 * Creates an associative array of translations from directory listing.
 	 *
+	 * @param string $dir File path to directory.
+	 *
 	 * @return array $packages Associative array of translation files per translation.
 	 */
-	private function create_packages() {
+	private function create_packages( $dir ) {
 		$packages             = array();
-		$this->directory_list = $this->list_directory( $this->temp_language_files_dir );
+		$this->directory_list = $this->list_directory( $dir );
 		foreach ( $this->translations as $translation ) {
 			$package = array();
 			foreach ( $this->directory_list as $file ) {
 				if ( false !== stripos( $file, $translation ) ) {
-					$package[] = $this->temp_language_files_dir . '/' . $file;
+					$package[] = "$dir/$file";
 				}
 			}
 			$packages[ $translation ] = $package;
