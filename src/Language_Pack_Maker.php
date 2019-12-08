@@ -215,8 +215,8 @@ class Language_Pack_Maker {
 
 		foreach ( $this->translations as $locale ) {
 			$params = array( "$dir/$locale.po", $dir );
-			$purge->invokeArgs( $class, array( $params, $assoc_args ) );
 			$make_json->invokeArgs( $class, $params );
+			$purge->invokeArgs( $class, array( $params, $assoc_args ) );
 		}
 	}
 
