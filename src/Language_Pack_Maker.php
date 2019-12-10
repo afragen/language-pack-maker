@@ -14,11 +14,14 @@
 namespace Fragen\Language_Pack_Maker;
 
 use Gettext\Translations;
+use WP_CLI\I18n\MakeJsonCommand;
+use Fragen\WP_CLI_Runner\Runner;
 
 /**
  * Class Language_Pack_Maker
  */
 class Language_Pack_Maker {
+
 	/**
 	 * List of files in specified directory.
 	 *
@@ -72,7 +75,7 @@ class Language_Pack_Maker {
 	 * Language_Pack_Maker constructor.
 	 */
 	public function __construct() {
-		$this->root_dir                = dirname( dirname( dirname( __DIR__ ) ) );
+		$this->root_dir                = dirname( __DIR__, 4 );
 		$this->language_files_dir      = $this->root_dir . '/languages';
 		$this->temp_language_files_dir = $this->root_dir . '/tmp';
 		$this->packages_dir            = $this->root_dir . '/packages';
@@ -86,12 +89,14 @@ class Language_Pack_Maker {
 	 */
 	public function run() {
 		$this->directory_list = $this->list_directory( $this->language_files_dir );
-		$this->copy_to_temp_dir( $this->temp_language_files_dir );
+		$this->copy_to_dir( $this->temp_language_files_dir );
 		$this->translations = $this->process_directory( $this->directory_list );
+		$this->create_js_files( $this->temp_language_files_dir );
 		$this->create_mo_files( $this->temp_language_files_dir );
-		$this->packages = $this->create_packages();
+		$this->packages = $this->create_packages( $this->temp_language_files_dir );
 		$this->create_language_packs();
 		$this->create_json();
+		$this->clean_up_dir( $this->temp_language_files_dir, $this->directory_list );
 	}
 
 	/**
@@ -113,15 +118,17 @@ class Language_Pack_Maker {
 	}
 
 	/**
-	 * Copy files from language files directory to temp directory for processing.
+	 * Copy files from one directory to another directory.
+	 *
+	 * @param string $dir File path to directory.
 	 *
 	 * @return void
 	 */
-	private function copy_to_temp_dir() {
+	private function copy_to_dir( $dir ) {
 		foreach ( $this->directory_list as $file ) {
-			copy( "$this->language_files_dir/$file", "$this->temp_language_files_dir/$file" );
+			copy( "$this->language_files_dir/$file", "$dir/$file" );
 		}
-		$this->directory_list = $this->list_directory( $this->temp_language_files_dir );
+		$this->directory_list = $this->list_directory( $dir );
 	}
 
 	/**
@@ -179,23 +186,55 @@ class Language_Pack_Maker {
 			$translations = Translations::fromPoFile( $po_list[ $locale ] );
 			$translations->toMoFile( "$dir/$locale.mo" );
 		}
+	}
 
-		// Re-create directory list of files to include new .mo files.
-		$this->directory_list = $this->list_directory( $dir );
+	/**
+	 * Create .json JS translation files from .po file.
+	 *
+	 * @param string $dir File path to temporary language files directory.
+	 *
+	 * @return void
+	 */
+	private function create_js_files( $dir ) {
+		$assoc_args = array(
+			'purge'        => true,
+			'pretty-print' => false,
+		);
+
+		Runner::init( $this->root_dir . '/vendor' );
+		$class      = new MakeJsonCommand();
+		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakeJsonCommand' );
+		$purge      = $reflection->getMethod( '__invoke' );
+		$make_json  = $reflection->getMethod( 'make_json' );
+		$make_json->setAccessible( true );
+
+		foreach ( glob( "$dir/*.po" ) as $file ) {
+			$base             = str_replace( '.po', '', basename( $file ) );
+			$po_list[ $base ] = $file;
+		}
+
+		foreach ( $this->translations as $locale ) {
+			$params = array( "$dir/$locale.po", $dir );
+			$make_json->invokeArgs( $class, $params );
+		}
+		$purge->invokeArgs( $class, array( array( $dir ), $assoc_args ) );
 	}
 
 	/**
 	 * Creates an associative array of translations from directory listing.
 	 *
+	 * @param string $dir File path to directory.
+	 *
 	 * @return array $packages Associative array of translation files per translation.
 	 */
-	private function create_packages() {
-		$packages = array();
+	private function create_packages( $dir ) {
+		$packages             = array();
+		$this->directory_list = $this->list_directory( $dir );
 		foreach ( $this->translations as $translation ) {
 			$package = array();
 			foreach ( $this->directory_list as $file ) {
 				if ( false !== stripos( $file, $translation ) ) {
-					$package[] = $this->temp_language_files_dir . '/' . $file;
+					$package[] = "$dir/$file";
 				}
 			}
 			$packages[ $translation ] = $package;
@@ -218,7 +257,7 @@ class Language_Pack_Maker {
 	 *
 	 * @link https://davidwalsh.name/create-zip-php
 	 *
-	 * @param array  $files       Array of .mo/.po files for each translation.
+	 * @param array  $files       Array of files for each language pack.
 	 * @param string $destination Filepath to zipfile.
 	 * @param bool   $overwrite   Boolean to set zipfile creation overwrite mode.
 	 *
@@ -245,9 +284,9 @@ class Language_Pack_Maker {
 
 		// check to make sure the file exists.
 		if ( file_exists( $destination ) ) {
-			printf( "\n" . basename( $destination ) . ' created. <br>' );
+			printf( "\n" . basename( $destination ) . ' created.' );
 		} else {
-			printf( "\n<span style='color:#f00'>" . basename( $destination ) . ' failed.</span><br>' );
+			printf( "\n>> " . basename( $destination ) . ' failed. <<' );
 		}
 	}
 
@@ -272,7 +311,7 @@ class Language_Pack_Maker {
 		}
 
 		file_put_contents( $this->root_dir . '/language-pack.json', json_encode( $arr ) );
-		printf( "\n<br>" . 'language-pack.json created.' . "\n" );
+		printf( "\n\n" . 'language-pack.json created.' . "\n" );
 	}
 
 	/**
@@ -287,5 +326,20 @@ class Language_Pack_Maker {
 		$translations = Translations::fromPoFile( $file );
 
 		return $translations->getHeader( 'PO-Revision-Date' );
+	}
+
+	/**
+	 * Cleanup directory.
+	 *
+	 * @param string $dir      Path to directory.
+	 * @param array  $filelist Array of files.
+	 *
+	 * @return void
+	 */
+	private function clean_up_dir( $dir, $filelist ) {
+		foreach ( $filelist as $file ) {
+			@unlink( "$dir/$file" );
+		}
+		@rmdir( $dir );
 	}
 }
