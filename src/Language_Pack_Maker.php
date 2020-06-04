@@ -1,11 +1,11 @@
 <?php
-
 /**
  * Language Pack Maker
  *
  * A lightweight class to combine mo/po/json files into language packs
  * and create a `language-pack.json` file containing update data.
  *
+ * @package   Language_Pack_Maker
  * @author    Andy Fragen
  * @license   MIT
  * @link      https://github.com/afragen/language-pack-maker
@@ -15,13 +15,13 @@ namespace Fragen\Language_Pack_Maker;
 
 use Gettext\Translations;
 use WP_CLI\I18n\MakeJsonCommand;
+use WP_CLI\I18n\MakeMoCommand;
 use Fragen\WP_CLI_Runner\Runner;
 
 /**
  * Class Language_Pack_Maker
  */
 class Language_Pack_Maker {
-
 	/**
 	 * List of files in specified directory.
 	 *
@@ -91,8 +91,11 @@ class Language_Pack_Maker {
 		$this->directory_list = $this->list_directory( $this->language_files_dir );
 		$this->copy_to_dir( $this->temp_language_files_dir );
 		$this->translations = $this->process_directory( $this->directory_list );
+
+		Runner::init( $this->root_dir . '/vendor' );
 		$this->create_js_files( $this->temp_language_files_dir );
 		$this->create_mo_files( $this->temp_language_files_dir );
+
 		$this->packages = $this->create_packages( $this->temp_language_files_dir );
 		$this->create_language_packs();
 		$this->create_json();
@@ -102,12 +105,12 @@ class Language_Pack_Maker {
 	/**
 	 * Create an array of the directory contents.
 	 *
-	 * @param string $dir filepath
+	 * @param string $dir filepath.
 	 *
 	 * @return array $dir_list Listing of directory contents.
 	 */
 	private function list_directory( $dir ) {
-		$dir_list = array();
+		$dir_list = [];
 
 		// Only add mo/po/zip/json files.
 		foreach ( glob( $dir . '/*.{mo,po,zip,json}', GLOB_BRACE ) as $file ) {
@@ -140,7 +143,6 @@ class Language_Pack_Maker {
 	 */
 	private function process_name( $filename ) {
 		if ( 'json' === pathinfo( $filename, PATHINFO_EXTENSION ) ) {
-
 			// Parse filename.
 			$list = explode( '-', pathinfo( $filename, PATHINFO_FILENAME ) );
 
@@ -149,6 +151,7 @@ class Language_Pack_Maker {
 
 			return implode( '-', $list );
 		}
+
 		return pathinfo( $filename, PATHINFO_FILENAME );
 	}
 
@@ -161,7 +164,7 @@ class Language_Pack_Maker {
 	 */
 	private function process_directory( $dir_list ) {
 		$translation_list = array_map(
-			array( $this, 'process_name' ),
+			[ $this, 'process_name' ],
 			$dir_list
 		);
 		$translation_list = array_unique( $translation_list );
@@ -177,15 +180,10 @@ class Language_Pack_Maker {
 	 * @return void
 	 */
 	private function create_mo_files( $dir ) {
-		foreach ( glob( "$dir/*.po" ) as $file ) {
-			$base             = str_replace( '.po', '', basename( $file ) );
-			$po_list[ $base ] = $file;
-		}
-
-		foreach ( $this->translations as $locale ) {
-			$translations = Translations::fromPoFile( $po_list[ $locale ] );
-			$translations->toMoFile( "$dir/$locale.mo" );
-		}
+		$class      = new MakeMoCommand();
+		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakeMoCommand' );
+		$invoke     = $reflection->getMethod( '__invoke' );
+		$invoke->invokeArgs( $class, [ [ $dir ], [] ] );
 	}
 
 	/**
@@ -196,15 +194,14 @@ class Language_Pack_Maker {
 	 * @return void
 	 */
 	private function create_js_files( $dir ) {
-		$assoc_args = array(
+		$assoc_args = [
 			'purge'        => true,
 			'pretty-print' => false,
-		);
+		];
 
-		Runner::init( $this->root_dir . '/vendor' );
 		$class      = new MakeJsonCommand();
 		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakeJsonCommand' );
-		$purge      = $reflection->getMethod( '__invoke' );
+		$invoke     = $reflection->getMethod( '__invoke' );
 		$make_json  = $reflection->getMethod( 'make_json' );
 		$make_json->setAccessible( true );
 
@@ -214,10 +211,10 @@ class Language_Pack_Maker {
 		}
 
 		foreach ( $this->translations as $locale ) {
-			$params = array( "$dir/$locale.po", $dir );
+			$params = [ "$dir/$locale.po", $dir ];
 			$make_json->invokeArgs( $class, $params );
 		}
-		$purge->invokeArgs( $class, array( array( $dir ), $assoc_args ) );
+		$invoke->invokeArgs( $class, [ [ $dir ], $assoc_args ] );
 	}
 
 	/**
@@ -228,10 +225,10 @@ class Language_Pack_Maker {
 	 * @return array $packages Associative array of translation files per translation.
 	 */
 	private function create_packages( $dir ) {
-		$packages             = array();
+		$packages             = [];
 		$this->directory_list = $this->list_directory( $dir );
 		foreach ( $this->translations as $translation ) {
-			$package = array();
+			$package = [];
 			foreach ( $this->directory_list as $file ) {
 				if ( false !== stripos( $file, $translation ) ) {
 					$package[] = "$dir/$file";
@@ -263,7 +260,7 @@ class Language_Pack_Maker {
 	 *
 	 * @return bool
 	 */
-	private function create_zip( $files = array(), $destination = '', $overwrite = true ) {
+	private function create_zip( $files = [], $destination = '', $overwrite = true ) {
 		// if the zip file already exists and overwrite is false, return false.
 		if ( file_exists( $destination ) && ! $overwrite ) {
 			return false;
@@ -295,7 +292,7 @@ class Language_Pack_Maker {
 	 */
 	private function create_json() {
 		$packages = $this->list_directory( $this->packages_dir );
-		$arr      = array();
+		$arr      = [];
 
 		foreach ( $packages as $package ) {
 			foreach ( $this->translations as $translation ) {

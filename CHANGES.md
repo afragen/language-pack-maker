@@ -1,5 +1,8 @@
 ## [unreleased]
 
+## 3.1.0 / 2020-06-04
+* use new `class MakeMoCommand` in `wp-cli/i18n-command@v2.2.3` to create .mo files
+
 ## 3.0.0 / 2019-12-10
 * process .json files in the framework
 * added WP-CLI _loader_ as composer module, [fork of polevaultweb/phpunit-wp-cli-runner](https://github.com/polevaultweb/phpunit-wp-cli-runner)
