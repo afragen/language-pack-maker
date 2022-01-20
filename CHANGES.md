@@ -1,5 +1,8 @@
 ## [unreleased]
 
+#### 3.1.1 / 2022-01-19
+* need to add required third parameter to `make_json()`
+
 ## 3.1.0 / 2020-06-04
 * use new `class MakeMoCommand` in `wp-cli/i18n-command@v2.2.3` to create .mo files
 
