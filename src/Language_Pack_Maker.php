@@ -17,6 +17,7 @@ use Gettext\Translations;
 use WP_CLI\I18n\MakeJsonCommand;
 use WP_CLI\I18n\MakeMoCommand;
 use Fragen\WP_CLI_Runner\Runner;
+use WP_CLI\I18n\MakePhpCommand;
 
 /**
  * Class Language_Pack_Maker
@@ -95,6 +96,7 @@ class Language_Pack_Maker {
 		Runner::init( $this->root_dir . '/vendor' );
 		$this->create_js_files( $this->temp_language_files_dir );
 		$this->create_mo_files( $this->temp_language_files_dir );
+		$this->create_php_files( $this->temp_language_files_dir );
 
 		$this->packages = $this->create_packages( $this->temp_language_files_dir );
 		$this->create_language_packs();
@@ -186,6 +188,13 @@ class Language_Pack_Maker {
 		$invoke->invokeArgs( $class, [ [ $dir ], [] ] );
 	}
 
+	private function create_php_files( $dir ) {
+		$class = new MakePhpCommand();
+		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakePhpCommand' );
+		$invoke     = $reflection->getMethod( '__invoke' );
+		$invoke->invokeArgs( $class, [ [ $dir ], [] ] );
+	}
+
 	/**
 	 * Create .json JS translation files from .po file.
 	 *
@@ -195,7 +204,7 @@ class Language_Pack_Maker {
 	 */
 	private function create_js_files( $dir ) {
 		$assoc_args = [
-			'purge'        => true,
+			'purge'        => false,
 			'pretty-print' => false,
 		];
 

@@ -1,4 +1,5 @@
 ## [unreleased]
+* use new `class MakePhpCommand` to create .i18n.php files
 
 ## 3.1.1 / 2022-01-19
 * need to add required third parameter to `make_json()`
