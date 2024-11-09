@@ -114,8 +114,8 @@ class Language_Pack_Maker {
 	private function list_directory( $dir ) {
 		$dir_list = [];
 
-		// Only add mo/po/zip/json files.
-		foreach ( glob( $dir . '/*.{mo,po,zip,json}', GLOB_BRACE ) as $file ) {
+		// Only add mo/po/zip/json/l10n.php files.
+		foreach ( glob( $dir . '/*.{mo,po,zip,json,l10n.php}', GLOB_BRACE ) as $file ) {
 			$dir_list[] = basename( $file );
 		}
 
@@ -188,6 +188,13 @@ class Language_Pack_Maker {
 		$invoke->invokeArgs( $class, [ [ $dir ], [] ] );
 	}
 
+	/**
+	 * Create .l10n.php files from .po files.
+	 *
+	 * @param string $dir File path to temporary language files directory.
+	 *
+	 * @return void
+	 */
 	private function create_php_files( $dir ) {
 		$class = new MakePhpCommand();
 		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakePhpCommand' );
