@@ -218,8 +218,8 @@ class Language_Pack_Maker {
 		$class      = new MakeJsonCommand();
 		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakeJsonCommand' );
 		$invoke     = $reflection->getMethod( '__invoke' );
-		$make_json  = $reflection->getMethod( 'make_json' );
-		$make_json->setAccessible( true );
+		$invoke->setAccessible( true );
+/* 		$make_json  = $reflection->getMethod( 'make_json' );
 
 		foreach ( glob( "$dir/*.po" ) as $file ) {
 			$base             = str_replace( '.po', '', basename( $file ) );
@@ -229,7 +229,7 @@ class Language_Pack_Maker {
 		foreach ( $this->translations as $locale ) {
 			$params = [ "$dir/$locale.po", $dir, null ];
 			$make_json->invokeArgs( $class, $params );
-		}
+		} */
 		$invoke->invokeArgs( $class, [ [ $dir ], $assoc_args ] );
 	}
 
