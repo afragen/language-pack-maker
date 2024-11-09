@@ -1,4 +1,6 @@
 ## [unreleased]
+
+## 3.2.0 / 2024-11-09
 * use new `class MakePhpCommand` to create .i18n.php files
 
 ## 3.1.1 / 2022-01-19
