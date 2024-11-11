@@ -2,7 +2,7 @@
 
 Requires PHP 7.0 or higher.
 
-Uses `class Language_Pack_Maker` installed via composer into your local translation repository to create a directory of zip archives of translation .mo/.po/.json files and a `language-pack.json` file containing data to pass to [GitHub Updater](https://github.com/afragen/github-updater) or [Translations Updater library](https://github.com/afragen/translations-updater).
+Uses `class Language_Pack_Maker` installed via composer into your local translation repository to create a directory of zip archives of translation .mo/.po/.json files and a `language-pack.json` file containing data to pass to [Git Updater](https://github.com/afragen/git-updater) or [Translations Updater library](https://github.com/afragen/translations-updater).
 
 Install the package via composer.
 
