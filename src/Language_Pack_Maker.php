@@ -186,7 +186,7 @@ class Language_Pack_Maker {
 		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakeMoCommand' );
 		$invoke     = $reflection->getMethod( '__invoke' );
 		$invoke->invokeArgs( $class, [ [ $dir ], [] ] );
-		print( "(.mo)\n");
+		print( " (.mo)\n");
 	}
 
 	/**
@@ -201,7 +201,7 @@ class Language_Pack_Maker {
 		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakePhpCommand' );
 		$invoke     = $reflection->getMethod( '__invoke' );
 		$invoke->invokeArgs( $class, [ [ $dir ], [] ] );
-		print( "(.l10n.php)\n");
+		print( " (.l10n.php)\n");
 	}
 
 	/**
@@ -233,7 +233,7 @@ class Language_Pack_Maker {
 			$make_json->invokeArgs( $class, $params );
 		} */
 		$invoke->invokeArgs( $class, [ [ $dir ], $assoc_args ] );
-		print( "(.json)\n");
+		print( " (.json)\n");
 	}
 
 	/**
