@@ -2,7 +2,7 @@
 
 Requires PHP 7.0 or higher.
 
-Uses `class Language_Pack_Maker` installed via composer into your local translation repository to create a directory of zip archives of translation .mo/.po/.json files and a `language-pack.json` file containing data to pass to [GitHub Updater](https://github.com/afragen/github-updater) or [Translations Updater library](https://github.com/afragen/translations-updater).
+Uses `class Language_Pack_Maker` installed via composer into your local translation repository to create a directory of zip archives of translation .mo/.po/.json files and a `language-pack.json` file containing data to pass to [Git Updater](https://github.com/afragen/git-updater) or [Translations Updater library](https://github.com/afragen/translations-updater).
 
 Install the package via composer.
 
@@ -14,6 +14,7 @@ This library requires all .po files to be in a `/languages` directory located in
 
 * It will copy all .po files from `/languages` to a temporary directory.
 * It will create .mo files from the .po files.
+* It will create .l10n.php files from the .po files.
 * It will create .json translation files for your javascript.
 * It will create zipfiles in a `/packages` directory in the repository root.
 * It will create a `language-pack.json` file in the repository root.
@@ -56,17 +57,15 @@ $transient->translations( array(
 ) );
 ```
 
-[GitHub Updater](https://github.com/afragen/github-updater) or the [Translations Updater library](https://github.com/afragen/translations-updater) will merge the correlative plugin or theme data with the data retrieved from the `language-pack.json` to add data to the update transient. Language updates will appear in the WordPress dashboard.
+[Git Updater](https://github.com/afragen/git-updater) or the [Translations Updater library](https://github.com/afragen/translations-updater) will merge the correlative plugin or theme data with the data retrieved from the `language-pack.json` to add data to the update transient. Language updates will appear in the WordPress dashboard.
 
-To utilize the Language Pack Creator, you will need to open and run `http://localhost/<my-translation-repo>/vendor/autoload.php` in localhost. This will create the necessary .mo, .json, zipfiles, and `language-pack.json`.
+To utilize the Language Pack Creator, you will need to open and run `http://localhost/<my-translation-repo>/vendor/autoload.php` in localhost. This will create the necessary .mo, .l10n.php, .json, zipfiles, and `language-pack.json`.
 
-### If you have translations in javascript files you should also do the following.
-
-With the following added to your `composer.json` file, it will run the sequence described above on `composer update`.
+With the following added to your `composer.json` file, it will run the sequence described above on `composer make-language-packs`.
 
 ```
   "scripts": {
-    "post-update-cmd": [
+    "make-language-packs": [
       "php ./vendor/autoload.php"
     ]
   }

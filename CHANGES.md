@@ -1,5 +1,8 @@
 ## [unreleased]
+
+## 3.2.1 / 2024-11-11
 * mess with `create_js_files()`
+* update README
 
 ## 3.2.0 / 2024-11-09
 * use new `class MakePhpCommand` to create .i18n.php files
