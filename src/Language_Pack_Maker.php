@@ -94,9 +94,9 @@ class Language_Pack_Maker {
 		$this->translations = $this->process_directory( $this->directory_list );
 
 		Runner::init( $this->root_dir . '/vendor' );
-		$this->create_js_files( $this->temp_language_files_dir );
 		$this->create_mo_files( $this->temp_language_files_dir );
 		$this->create_php_files( $this->temp_language_files_dir );
+		$this->create_js_files( $this->temp_language_files_dir );
 
 		$this->packages = $this->create_packages( $this->temp_language_files_dir );
 		$this->create_language_packs();
@@ -186,6 +186,7 @@ class Language_Pack_Maker {
 		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakeMoCommand' );
 		$invoke     = $reflection->getMethod( '__invoke' );
 		$invoke->invokeArgs( $class, [ [ $dir ], [] ] );
+		print( "(.mo)\n");
 	}
 
 	/**
@@ -200,6 +201,7 @@ class Language_Pack_Maker {
 		$reflection = new \ReflectionClass( '\WP_CLI\I18n\MakePhpCommand' );
 		$invoke     = $reflection->getMethod( '__invoke' );
 		$invoke->invokeArgs( $class, [ [ $dir ], [] ] );
+		print( "(.l10n.php)\n");
 	}
 
 	/**
@@ -231,6 +233,7 @@ class Language_Pack_Maker {
 			$make_json->invokeArgs( $class, $params );
 		} */
 		$invoke->invokeArgs( $class, [ [ $dir ], $assoc_args ] );
+		print( "(.json)\n");
 	}
 
 	/**
